@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Analysis Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .sidebar { height: 100vh; overflow-y: auto; }
+        .main-content { height: 100vh; }
+        iframe { height: calc(100vh - 100px); }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="position-sticky pt-3">
+                    {% for section_title, content in nav.items() %}
+                    <h6 class="sidebar-heading px-3 mt-4 mb-1 text-muted">
+                        {{ section_title }}
+                    </h6>
+                    {% if section_title == 'Charts' %}
+                        {% for subsection, items in content.items() %}
+                        <div class="mb-2">
+                            <h6 class="px-3">{{ subsection }}</h6>
+                            <ul class="nav flex-column">
+                                {% for item in items %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/charts/{{ item }}" target="content-frame">
+                                        {{ item.split('/')[-1].replace('.html', '').replace('.png', '').replace('_', ' ').title() }}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <ul class="nav flex-column">
+                        {% for item in content %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="/{{ section_title.lower() }}/{{ item }}" 
+                                   target="{% if section_title == 'Data' %}_blank{% else %}content-frame{% endif %}">
+                                    {{ item.replace('.html', '').replace('.csv', '').replace('_', ' ').title() }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Market Analysis Dashboard</h1>
+                    <div class="text-muted">Last updated: {{ last_update }}</div>
+                </div>
+                <iframe name="content-frame" style="width: 100%; border: none;"></iframe>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
